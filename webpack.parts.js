@@ -1,7 +1,27 @@
 const { WebpackPluginServe } = require('webpack-plugin-serve')
 const { MiniHtmlWebpackPlugin } = require('mini-html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 const path = require('path')
+const { ModuleFederationPlugin } = require("webpack").container;
+
+exports.federateModule = ({
+  name,
+  filename,
+  exposes,
+  remotes,
+  shared,
+}) => ({
+  plugins: [
+    new ModuleFederationPlugin({
+      name,
+      filename,
+      exposes,
+      remotes,
+      shared,
+    }),
+  ],
+});
 
 /*
 
@@ -20,6 +40,10 @@ console.log(
 
 */
 
+exports.clean = () => ({
+  plugins: [ new CleanWebpackPlugin() ]
+})
+
 exports.devServer = () => ({
   watch: true,
   plugins: [
@@ -33,7 +57,11 @@ exports.devServer = () => ({
 })
 
 exports.page = ({ title }) => ({
-  plugins: [new MiniHtmlWebpackPlugin({ context: { title } })]
+  plugins: [
+    new MiniHtmlWebpackPlugin({ context: { title } }),
+    // Limit code splitting chunks, 
+    // new webpack.optimize.LimitChunkCountPlugin({ maxChunks: 1 })
+  ]
 })
 
 exports.loadCSS = () => ({
@@ -161,6 +189,11 @@ exports.loadTypeScript = () => ({
     extensions: [".ts", ".js"]
   },
 })
+
+exports.generateSourceMaps = ({ type }) => ({
+  devtool: type
+})
+
 
 // exports.responsiveImages = () => ({
 //   module: {

@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkwebpack_demo=self.webpackChunkwebpack_demo||[]).push([[623],{623:function(e,c,t){t.r(c);var a=t(416),n=t.n(a);c.default=function(){return n().createElement("h1",{className:"text-xl"},"Demo is cool")}}}]);

@@ -9,15 +9,20 @@ const commonConfig = ({ outputPath = '/dist' } = {}) => {
   return merge([
     { 
       entry: ["./src"], 
+      output: {
+        chunkFilename: 'chunk.[id].js',
+        path: path.resolve(process.cwd(), 'dist')
+      }
       // output: { 
       //   path: __dirname + outputPath
       // }
     },
+    parts.clean(),
     parts.page({ title: 'Demo' }),
     parts.extractCSS({ loaders: cssLoaders }),
     parts.loadImages({ limit: 15000 }),
     parts.loadFonts(),
-    parts.loadTypeScript()
+    parts.loadTypeScript() 
     // parts.loadJavaScript()
     // parts.extractCSS()
     // parts.loadCSS()
@@ -25,7 +30,31 @@ const commonConfig = ({ outputPath = '/dist' } = {}) => {
 
 }
 
-const productionConfig = merge([])
+const productionConfig = merge([
+  parts.generateSourceMaps({ type: 'source-map' }),
+  {
+    entry: {
+      app: {
+        import: path.join(__dirname, 'src', 'index.ts'),
+        dependOn: 'vendor'
+      },
+      vendor: ['react', 'react-dom']
+    }
+  }
+  // { optimization: { 
+  //     splitChunks: { 
+  //       cacheGroups: {
+  //         commons: {
+  //           test: /[\\/]node_modules[\\/]/,
+  //           name: 'vendor',
+  //           chunks: 'initial'
+  //         }
+  //       }
+  //     } 
+  //   } 
+  // }
+  // { optimization: { splitChunks: { chunks: 'all' } } }
+])
 
 // const productionConfig = merge([
 //   { mode: 'production' }
